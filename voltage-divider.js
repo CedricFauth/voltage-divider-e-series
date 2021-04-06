@@ -49,7 +49,7 @@ const calculator = (inV, outV, values, series)=>{
 			let err = 1-Math.min(out, outV)/Math.max(out, outV);
 			if (err < 0.2/Math.log(series))
 				calced.push({
-					"out":out, "r1":r1, "r2":r2, "err":err
+					"out":out, "r1":r1, "r2":r2, "err":err*100
 				});
 		});
 	});
@@ -61,8 +61,51 @@ const calculator = (inV, outV, values, series)=>{
 		else return 0;
 	});
 	console.log(calced.length,calced.slice(0,20));
-	return calced;
+	return calced.slice(0,10);
 }
 
-let values = values_for_e_series(e_series.e96);
-calculator(4, 3, values, e_series.e96);
+const generateTableHead = (table)=>{
+	  let thead = table.createTHead();
+	  let row = thead.insertRow();
+	  let data = ["Output / V", "R1 / Ohms", "R2 / Ohms", "Error / %"];
+	  for (let key of data) {
+		let th = document.createElement("th");
+		let text = document.createTextNode(key);
+		th.appendChild(text);
+		row.appendChild(th);
+	  }
+	
+}
+
+const generateTable = (table, data)=>{
+	for (let element of data) {
+	  let row = table.insertRow();
+	  for (key in element) {
+		let cell = row.insertCell();
+		let text = document.createTextNode(Math.round(element[key]*100)/100);
+		cell.appendChild(text);
+	  }
+	}
+  }
+
+const volt_div = ()=>{
+	let inVolt = parseInt(document.getElementById("inVolt").value);
+	let outVolt = parseInt(document.getElementById("outVolt").value);
+	let series = document.getElementById("state").value;
+	console.log(inVolt, outVolt, series);
+	if (inVolt && outVolt && series && inVolt > outVolt) {
+
+
+		let values = values_for_e_series(e_series[series]);
+		let new_values = calculator(inVolt, outVolt, values, e_series[series]);
+
+		let table = document.querySelector("table");
+		while(table.hasChildNodes()){
+			table.removeChild(table.firstChild);
+		}
+
+		generateTableHead(table);
+		generateTable(table, new_values);
+
+	}
+}
