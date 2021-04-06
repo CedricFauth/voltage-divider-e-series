@@ -1,4 +1,4 @@
-# voltage-divider-e-series
+# Voltage Divider Resistor Calculator using E-Series
 Calculates optimal values for resistors in a voltage divider using the E-Series.
 
 Voltage Divider:
